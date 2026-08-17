@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Forge — Green Level High School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0A0E13;
+    --bg-raised: #10161D;
+    --panel: #141B23;
+    --line: #232E39;
+    --line-bright: #37485A;
+    --cyan: #5FD4E8;
+    --cyan-dim: #3A8A9A;
+    --ember: #FF6A39;
+    --ember-dim: #B8471E;
+    --text: #E7EDF3;
+    --text-dim: #93A3B3;
+    --text-faint: #56646F;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height:1.6;
+    overflow-x:hidden;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    background-position: -1px -1px;
+    background-attachment: fixed;
+  }
+
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(95,212,232,0.07), transparent 60%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  a{ color:inherit; text-decoration:none; }
+  img{ max-width:100%; display:block; }
+
+  .wrap{ max-width:1120px; margin:0 auto; padding:0 28px; position:relative; z-index:1; }
+
+  ::selection{ background: var(--ember); color:#0A0E13; }
+
+  :focus-visible{
+    outline: 2px solid var(--cyan);
+    outline-offset: 3px;
+  }
+
+  /* ---------- Eyebrow / mono labels ---------- */
+  .eyebrow{
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--cyan-dim);
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{
+    content:"";
+    width:7px; height:7px;
+    background: var(--cyan);
+    box-shadow: 0 0 8px var(--cyan);
+    flex-shrink:0;
+  }
+
+  h1,h2,h3{ font-family: var(--font-display); font-weight:700; letter-spacing:-0.01em; }
+
+  /* ---------- Nav ---------- */
+  header{
+    position: sticky; top:0; z-index:50;
+    background: rgba(10,14,19,0.86);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 18px 28px;
+    max-width:1120px; margin:0 auto;
+  }
+  .brand{
+    display:flex; align-items:center; gap:10px;
+    font-family: var(--font-display); font-weight:700; font-size:18px;
+    color: var(--text);
+  }
+  .brand-mark{
+    width:26px; height:26px;
+    border:1.5px solid var(--cyan);
+    display:grid; place-items:center;
+    position:relative;
+    transform: rotate(45deg);
+    flex-shrink:0;
+  }
+  .brand-mark::after{
+    content:"";
+    width:8px; height:8px;
+    background: var(--ember);
+    box-shadow: 0 0 10px var(--ember);
+  }
+  .nav-links{ display:flex; gap:32px; font-size:14.5px; color: var(--text-dim); }
+  .nav-links a{ transition: color .2s; }
+  .nav-links a:hover{ color: var(--cyan); }
+  .nav-cta{
+    font-family: var(--font-mono); font-size:13px;
+    border:1px solid var(--line-bright);
+    padding:9px 16px;
+    color: var(--text);
+    transition: all .2s;
+    white-space:nowrap;
+  }
+  .nav-cta:hover{ border-color: var(--cyan); color: var(--cyan); background: rgba(95,212,232,0.06); }
+  .nav-mobile-hide{ display:flex; }
+  @media (max-width:720px){ .nav-mobile-hide{ display:none; } }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding: 100px 0 90px;
+    position:relative;
+  }
+  .hero-grid{
+    display:grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap:56px;
+    align-items:center;
+  }
+  @media (max-width: 900px){ .hero-grid{ grid-template-columns:1fr; } }
+
+  .hero h1{
+    font-size: clamp(38px, 5.6vw, 64px);
+    line-height: 1.04;
+    margin: 18px 0 22px;
+  }
+  .hero h1 .accent{ color: var(--ember); }
+  .hero p.lede{
+    font-size: 17.5px;
+    color: var(--text-dim);
+    max-width: 46ch;
+    margin-bottom: 32px;
+  }
+  .hero-ctas{ display:flex; gap:14px; flex-wrap:wrap; }
+
+  .btn{
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    letter-spacing: 0.02em;
+    padding: 14px 24px;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    border:1px solid transparent;
+    transition: all .2s ease;
+    cursor:pointer;
+  }
+  .btn-primary{
+    background: var(--ember);
+    color: #0A0E13;
+    font-weight:600;
+  }
+  .btn-primary:hover{ background:#ff8054; transform: translateY(-1px); }
+  .btn-ghost{
+    border-color: var(--line-bright);
+    color: var(--text);
+  }
+  .btn-ghost:hover{ border-color: var(--cyan); color: var(--cyan); }
+
+  /* Terminal */
+  .terminal{
+    background: #0D1319;
+    border: 1px solid var(--line-bright);
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.7), 0 0 0 1px rgba(95,212,232,0.03);
+    font-family: var(--font-mono);
+    font-size: 13.5px;
+    overflow:hidden;
+  }
+  .terminal-bar{
+    display:flex; align-items:center; gap:8px;
+    padding: 11px 14px;
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+  }
+  .dot{ width:10px; height:10px; border-radius:50%; background: var(--line-bright); }
+  .terminal-bar span.label{
+    margin-left:8px; color: var(--text-faint); font-size:12px;
+  }
+  .terminal-body{
+    padding: 20px 18px 26px;
+    min-height: 260px;
+    color: #A9E8C7;
+  }
+  .terminal-body .prompt{ color: var(--cyan); }
+  .terminal-body .comment{ color: var(--text-faint); }
+  .terminal-body .out{ color: var(--text-dim); }
+  .terminal-body .ember-txt{ color: var(--ember); }
+  .caret{
+    display:inline-block; width:8px; height:15px;
+    background: var(--cyan);
+    vertical-align: -2px;
+    animation: blink 1s steps(1) infinite;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .term-line{ min-height:1.6em; white-space:pre-wrap; word-break: break-word; }
+
+  /* ---------- Section shared ---------- */
+  section{ padding: 96px 0; position:relative; }
+  .section-head{ margin-bottom: 48px; max-width: 640px; }
+  .section-head h2{ font-size: clamp(28px, 3.6vw, 40px); margin-top:14px; line-height:1.12; }
+  .section-head p{ color: var(--text-dim); margin-top:14px; font-size:16px; max-width:56ch; }
+
+  .divider{
+    border:none; height:1px;
+    background: linear-gradient(90deg, transparent, var(--line-bright) 20%, var(--line-bright) 80%, transparent);
+  }
+
+  .reveal{ opacity:0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity:1; transform:none; }
+
+  /* ---------- What is AI Forge ---------- */
+  .what-grid{
+    display:grid; grid-template-columns: repeat(3, 1fr); gap:1px;
+    background: var(--line);
+    border:1px solid var(--line);
+  }
+  @media (max-width: 820px){ .what-grid{ grid-template-columns:1fr; } }
+  .what-card{
+    background: var(--bg-raised);
+    padding: 30px 26px;
+  }
+  .what-card .num{
+    font-family: var(--font-mono); font-size:12px; color: var(--text-faint);
+    margin-bottom:14px; letter-spacing:0.1em;
+  }
+  .what-card h3{ font-size:19px; margin-bottom:10px; }
+  .what-card p{ color: var(--text-dim); font-size:14.5px; }
+
+  /* ---------- Pipeline ---------- */
+  .pipeline{
+    display:flex; flex-direction:column; gap:0;
+    border-left: 1px solid var(--line-bright);
+    margin-left: 6px;
+  }
+  .pipe-stage{
+    position:relative;
+    padding: 28px 0 28px 38px;
+    display:grid;
+    grid-template-columns: 200px 1fr;
+    gap: 24px;
+  }
+  @media (max-width:760px){ .pipe-stage{ grid-template-columns:1fr; gap:10px; } }
+  .pipe-stage::before{
+    content:"";
+    position:absolute;
+    left:-6.5px; top:34px;
+    width:12px; height:12px;
+    background: var(--bg);
+    border:2px solid var(--cyan-dim);
+    transform: rotate(45deg);
+    transition: all .25s;
+  }
+  .pipe-stage:hover::before{
+    border-color: var(--ember);
+    box-shadow: 0 0 12px var(--ember);
+  }
+  .pipe-stage:not(:last-child){ border-bottom: 1px dashed var(--line); }
+  .pipe-label{
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--cyan);
+    letter-spacing:0.06em;
+    padding-top:3px;
+  }
+  .pipe-content h3{ font-size:20px; margin-bottom:8px; }
+  .pipe-content p{ color: var(--text-dim); font-size:14.8px; max-width:56ch; }
+  .pipe-tags{ display:flex; gap:8px; flex-wrap:wrap; margin-top:12px; }
+  .tag{
+    font-family: var(--font-mono); font-size:11.5px;
+    color: var(--text-faint);
+    border:1px solid var(--line);
+    padding:4px 9px;
+  }
+
+  /* ---------- Sessions ---------- */
+  .sessions{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  @media (max-width: 900px){ .sessions{ grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 520px){ .sessions{ grid-template-columns: 1fr; } }
+  .session-card{
+    background: var(--bg-raised);
+    padding: 24px 20px;
+    transition: background .2s;
+  }
+  .session-card:hover{ background: var(--panel); }
+  .session-card .sess-num{
+    font-family: var(--font-mono); font-size:11px; color: var(--ember);
+    letter-spacing:0.1em;
+  }
+  .session-card h4{ font-family: var(--font-display); font-size:15.5px; margin:8px 0 6px; line-height:1.3; }
+  .session-card p{ font-size:13px; color: var(--text-faint); }
+
+  .advanced-track{
+    margin-top: 1px;
+    background: var(--bg-raised);
+    border: 1px solid var(--line);
+    border-top:none;
+    padding: 24px 26px;
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    flex-wrap:wrap;
+  }
+  .advanced-track .lbl{ font-family: var(--font-mono); font-size:12px; color: var(--cyan); letter-spacing:0.08em; }
+  .advanced-track h4{ font-size:17px; margin-top:6px; }
+  .advanced-track p{ color: var(--text-dim); font-size:13.5px; margin-top:4px; max-width:52ch; }
+
+  /* ---------- Ship / portfolio ---------- */
+  .ship{
+    display:grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items:center;
+  }
+  @media (max-width:860px){ .ship{ grid-template-columns:1fr; } }
+  .ship-visual{
+    border:1px solid var(--line-bright);
+    background: var(--bg-raised);
+    padding: 26px;
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+  .ship-visual .row{
+    display:flex; justify-content:space-between; align-items:center;
+    padding: 12px 0;
+    border-bottom: 1px dashed var(--line);
+    color: var(--text-dim);
+  }
+  .ship-visual .row:last-child{ border-bottom:none; }
+  .ship-visual .status{
+    color: #7CD9A0; font-size:11.5px;
+  }
+  .ship-list{ display:flex; flex-direction:column; gap:20px; }
+  .ship-item{ display:flex; gap:16px; }
+  .ship-item .mark{
+    font-family: var(--font-mono); color: var(--ember); flex-shrink:0; padding-top:2px;
+  }
+  .ship-item h4{ font-size:16.5px; margin-bottom:4px; }
+  .ship-item p{ font-size:14px; color: var(--text-dim); }
+
+  /* ---------- Founder ---------- */
+  .founder{
+    display:grid; grid-template-columns: 240px 1fr; gap: 44px; align-items:start;
+    border:1px solid var(--line);
+    background: var(--bg-raised);
+    padding: 40px;
+  }
+  @media (max-width:720px){ .founder{ grid-template-columns:1fr; padding:28px; } }
+  .founder-id{
+    font-family: var(--font-mono); font-size:12.5px; color: var(--text-faint);
+  }
+  .founder-id .name{
+    font-family: var(--font-display); color: var(--text); font-size:22px; font-weight:700; margin: 10px 0 4px;
+  }
+  .founder-id .role{ color: var(--cyan); }
+  .founder blockquote{
+    font-family: var(--font-display); font-size: clamp(19px, 2.3vw, 24px);
+    line-height:1.42; color: var(--text); font-weight:500;
+  }
+  .founder-credit{ margin-top:20px; color: var(--text-faint); font-size:13.5px; font-family: var(--font-mono); }
+
+  /* ---------- FAQ ---------- */
+  .faq-item{
+    border-bottom: 1px solid var(--line);
+    padding: 22px 0;
+  }
+  .faq-q{
+    display:flex; justify-content:space-between; align-items:center; gap:20px;
+    cursor:pointer;
+    font-family: var(--font-display); font-weight:600; font-size:16.5px;
+  }
+  .faq-q .plus{
+    font-family: var(--font-mono); color: var(--cyan); font-size:18px; flex-shrink:0;
+    transition: transform .25s;
+  }
+  .faq-item.open .plus{ transform: rotate(45deg); color: var(--ember); }
+  .faq-a{
+    max-height:0; overflow:hidden;
+    transition: max-height .3s ease;
+    color: var(--text-dim); font-size:14.8px;
+  }
+  .faq-item.open .faq-a{ max-height: 200px; }
+  .faq-a-inner{ padding-top:12px; max-width: 62ch; }
+
+  /* ---------- Join / status ---------- */
+  .join{
+    text-align:center;
+    padding: 90px 0 100px;
+  }
+  .join-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family: var(--font-mono); font-size:12px;
+    color: var(--text-faint);
+    border:1px solid var(--line);
+    padding:7px 14px;
+    margin-bottom:26px;
+  }
+  .join-badge .pulse{
+    width:7px; height:7px; border-radius:50%;
+    background: var(--ember);
+    box-shadow: 0 0 8px var(--ember);
+    animation: pulse 1.6s infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.3; } }
+  .join h2{ font-size: clamp(28px,4vw,42px); max-width:20ch; margin:0 auto 18px; }
+  .join p{ color: var(--text-dim); max-width:50ch; margin:0 auto 34px; font-size:16px; }
+
+  /* ---------- Footer ---------- */
+  footer{
+    border-top: 1px solid var(--line);
+    padding: 32px 0;
+  }
+  .footer-row{
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;
+    font-family: var(--font-mono); font-size:12.5px; color: var(--text-faint);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; scroll-behavior:auto !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand">
+      <span class="brand-mark"></span>
+      AI FORGE
+    </div>
+    <nav class="nav-links nav-mobile-hide">
+      <a href="#pipeline">How it works</a>
+      <a href="#sessions">Sessions</a>
+      <a href="#founder">Who's running it</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a href="#join" class="nav-cta">Get on the list →</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="eyebrow">GREEN LEVEL HIGH SCHOOL · NEW CLUB</div>
+      <h1>Stop learning about AI.<br>Start <span class="accent">shipping</span> it.</h1>
+      <p class="lede">AI Forge is a build-it-yourself club for students who want to go from a blank editor to a live, working AI-powered app — one they own, hosted on the real internet, that anyone can use.</p>
+      <div class="hero-ctas">
+        <a href="#join" class="btn btn-primary">Join the founding cohort</a>
+        <a href="#pipeline" class="btn btn-ghost">See what you'll build</a>
+      </div>
+    </div>
+
+    <div class="terminal" role="img" aria-label="Terminal animation showing AI Forge booting up and deploying a project">
+      <div class="terminal-bar">
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+        <span class="label">aiforge@greenlevel</span>
+      </div>
+      <div class="terminal-body" id="termBody"></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="what">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">THE PITCH</div>
+      <h2>Most "AI clubs" watch demos.<br>This one hands you the keys.</h2>
+      <p>No prior coding background required. No sitting through slides about what AI "could" do. You'll leave with something real: a project you built, deployed, and can point to.</p>
+    </div>
+
+    <div class="what-grid reveal">
+      <div class="what-card">
+        <div class="num">01</div>
+        <h3>You own the whole stack</h3>
+        <p>Not just the AI part. You'll touch the frontend, the backend, the domain, and the server it runs on — the entire path from idea to live product.</p>
+      </div>
+      <div class="what-card">
+        <div class="num">02</div>
+        <h3>Everything ends up live</h3>
+        <p>No project stays a local file on your laptop. Every build gets a real domain and runs on a real server you set up yourself.</p>
+      </div>
+      <div class="what-card">
+        <div class="num">03</div>
+        <h3>Built by a student, for students</h3>
+        <p>This isn't a repackaged corporate curriculum. It's the exact path our founder used to build and ship his own products — compressed into sessions you can actually follow.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="pipeline">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">THE PIPELINE</div>
+      <h2>Five stages. One shipped product.</h2>
+      <p>This is the actual order things happen in, every time you build something real. Each stage in the club maps directly to one of these.</p>
+    </div>
+
+    <div class="pipeline reveal">
+      <div class="pipe-stage">
+        <div class="pipe-label">STAGE 01</div>
+        <div class="pipe-content">
+          <h3>AI tools & integration</h3>
+          <p>Use AI as an actual engineering tool — writing code with it, wiring it into an app, and knowing where it helps versus where it gets in the way.</p>
+          <div class="pipe-tags"><span class="tag">prompting for code</span><span class="tag">APIs</span><span class="tag">Claude / LLMs</span></div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-label">STAGE 02</div>
+        <div class="pipe-content">
+          <h3>App building</h3>
+          <p>Turn an idea into an actual interface people can click through — real screens, real interactions, not a mockup.</p>
+          <div class="pipe-tags"><span class="tag">web apps</span><span class="tag">React</span><span class="tag">UI/UX basics</span></div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-label">STAGE 03</div>
+        <div class="pipe-content">
+          <h3>Domain & web setup</h3>
+          <p>Register a domain, point it at your project, and understand what actually happens between typing a URL and a page loading.</p>
+          <div class="pipe-tags"><span class="tag">DNS</span><span class="tag">domains</span><span class="tag">hosting</span></div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-label">STAGE 04</div>
+        <div class="pipe-content">
+          <h3>Cloud & VPS hosting</h3>
+          <p>Spin up your own Ubuntu server in the cloud and deploy to it directly — the same way real products go live.</p>
+          <div class="pipe-tags"><span class="tag">Ubuntu</span><span class="tag">Linux basics</span><span class="tag">cloud VPS</span></div>
+        </div>
+      </div>
+      <div class="pipe-stage">
+        <div class="pipe-label">STAGE 05</div>
+        <div class="pipe-content">
+          <h3>AI agents & publishing</h3>
+          <p>Build something that can actually take action, not just answer questions — then publish the finished product for anyone to use.</p>
+          <div class="pipe-tags"><span class="tag">agents</span><span class="tag">automation</span><span class="tag">launch</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="sessions">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">THE SESSIONS</div>
+      <h2>Eight sessions. One track for everyone, one for people who want more.</h2>
+      <p>Each meeting builds on the last. By the final session, your project is live — not hypothetically, actually online.</p>
+    </div>
+
+    <div class="sessions reveal">
+      <div class="session-card">
+        <div class="sess-num">SESSION 1</div>
+        <h4>Foundations</h4>
+        <p>What "building with AI" really means, and setting up your toolkit.</p>
+      </div>
+      <div class="session-card">
+        <div class="sess-num">SESSION 2</div>
+        <h4>Idea → Interface</h4>
+        <p>Design and build the first working screens of your app.</p>
+      </div>
+      <div class="session-card">
+        <div class="sess-num">SESSION 3</div>
+        <h4>Domains & going live</h4>
+        <p>Register a domain and connect it to something real.</p>
+      </div>
+      <div class="session-card">
+        <div class="sess-num">SESSION 4</div>
+        <h4>Servers & Ubuntu</h4>
+        <p>Set up a cloud VPS and understand what's actually running your app.</p>
+      </div>
+      <div class="session-card">
+        <div class="sess-num">SESSION 5</div>
+        <h4>Data & backends</h4>
+        <p>Give your app memory — storing and retrieving real data.</p>
+      </div>
+      <div class="session-card">
+        <div class="sess-num">SESSION 6</div>
+        <h4>AI agents</h4>
+        <p>Build something that takes action on its own, not just responds.</p>
+      </div>
+      <div class="session-card">
+        <div class="sess-num">SESSION 7</div>
+        <h4>Polish & publish</h4>
+        <p>Clean up the rough edges and prepare for a public launch.</p>
+      </div>
+      <div class="session-card">
+        <div class="sess-num">SESSION 8</div>
+        <h4>Ship day</h4>
+        <p>Demo your live, working product to the club.</p>
+      </div>
+    </div>
+
+    <div class="advanced-track reveal">
+      <div>
+        <div class="lbl">OPTIONAL · FOR THOSE WHO WANT TO GO DEEPER</div>
+        <h4>Advanced ML track</h4>
+        <p>Running alongside the core sessions for students who want to get into how the models themselves actually work.</p>
+      </div>
+      <a href="#join" class="btn btn-ghost">I'm interested →</a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="ship">
+  <div class="wrap ship">
+    <div class="ship-list reveal">
+      <div class="eyebrow" style="margin-bottom:6px;">WHAT YOU WALK AWAY WITH</div>
+      <h2 style="font-size:clamp(26px,3.2vw,34px); margin-bottom:10px;">This goes in your portfolio, not a folder.</h2>
+      <div class="ship-item">
+        <span class="mark">→</span>
+        <div><h4>A live URL, not a screenshot</h4><p>Something you can hand to a friend, a teacher, or a college admissions officer, and they can actually open it.</p></div>
+      </div>
+      <div class="ship-item">
+        <span class="mark">→</span>
+        <div><h4>A server you set up yourself</h4><p>You'll know what a VPS is because you configured one — not because you read about it.</p></div>
+      </div>
+      <div class="ship-item">
+        <span class="mark">→</span>
+        <div><h4>Proof you can finish what you start</h4><p>Most side projects die before they ship. Yours won't — the whole club is structured around getting to launch.</p></div>
+      </div>
+    </div>
+
+    <div class="ship-visual reveal">
+      <div class="row"><span>frontend</span><span class="status">● deployed</span></div>
+      <div class="row"><span>backend</span><span class="status">● deployed</span></div>
+      <div class="row"><span>domain</span><span class="status">● live</span></div>
+      <div class="row"><span>server (ubuntu vps)</span><span class="status">● running</span></div>
+      <div class="row"><span>ai agent</span><span class="status">● active</span></div>
+      <div class="row" style="border-bottom:none; padding-top:18px;">
+        <span style="color:var(--text-faint);">build status</span>
+        <span class="ember-txt" style="font-weight:600;">shipped ✓</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="founder">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <div class="eyebrow">WHO'S RUNNING THIS</div>
+      <h2>Not a teacher reading a curriculum.</h2>
+    </div>
+
+    <div class="founder reveal">
+      <div class="founder-id">
+        <div>FOUNDER</div>
+        <div class="name">Arnav</div>
+        <div class="role">Incoming Freshman, Green Level HS</div>
+      </div>
+      <div>
+        <blockquote>"I built AI Forge to teach the path I had to figure out myself — going from an idea to something actually live on the internet. I'm not teaching this from a textbook. I've shipped real products with this exact process, and I want other students to be able to do the same thing without spending months stuck on YouTube tutorials."</blockquote>
+        <div class="founder-credit">Also co-founder of MedSchoolPrep, a pre-med roadmap platform built and shipped for high schoolers.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<section id="faq">
+  <div class="wrap" style="max-width:780px;">
+    <div class="section-head reveal">
+      <div class="eyebrow">BEFORE YOU JOIN</div>
+      <h2>Questions people actually ask</h2>
+    </div>
+
+    <div class="faq-list reveal">
+      <div class="faq-item open">
+        <div class="faq-q"><span>Do I need to know how to code already?</span><span class="plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">No. Sessions start from the basics of building an app. If you already code, you'll move faster and can jump into the advanced track sooner.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Do I need my own laptop?</span><span class="plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Yes — bring a laptop to sessions. Everything you build lives on it (and eventually, on a live server you control).</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>Is there a cost?</span><span class="plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">AI Forge itself is free to join. Some tools used during the pipeline (like a domain name) have small real-world costs — we'll walk through the cheapest options together.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>When do sessions actually meet?</span><span class="plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">AI Forge is finishing up official chartering at Green Level HS. Exact meeting days and times are being finalized — join the list below and you'll be the first to know.</div></div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>What if I only care about the AI part, not the servers?</span><span class="plus">+</span></div>
+        <div class="faq-a"><div class="faq-a-inner">Totally fine to stay focused there — but part of the point of AI Forge is that AI is only useful once it's actually live in something people can use. The full pipeline is what makes that possible.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="join" class="join">
+  <div class="wrap">
+    <div class="join-badge"><span class="pulse"></span> CHARTERING IN PROGRESS AT GREEN LEVEL HS</div>
+    <h2>Be part of the founding cohort.</h2>
+    <p>Add your name now and you'll get the first word on meeting times, the faculty sponsor, and where to show up for Session 1.</p>
+    <div class="hero-ctas" style="justify-content:center;">
+      <a href="#" class="btn btn-primary">Add my name to the list</a>
+      <a href="mailto:" class="btn btn-ghost">Ask a question</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <span>AI FORGE — GREEN LEVEL HIGH SCHOOL</span>
+    <span>FOUNDED BY ARNAV · 2026</span>
+  </div>
+</footer>
+
+<script>
+  // Terminal boot sequence
+  const lines = [
+    { html: '<span class="prompt">$</span> ./init ai-forge', pause: 500 },
+    { html: '<span class="out">loading pipeline...</span>', pause: 350 },
+    { html: '<span class="out">[1/5] ai tools & integration</span>     <span style="color:#7CD9A0">ok</span>', pause: 280 },
+    { html: '<span class="out">[2/5] app build</span>                  <span style="color:#7CD9A0">ok</span>', pause: 280 },
+    { html: '<span class="out">[3/5] domain + hosting</span>           <span style="color:#7CD9A0">ok</span>', pause: 280 },
+    { html: '<span class="out">[4/5] ubuntu vps</span>                 <span style="color:#7CD9A0">ok</span>', pause: 280 },
+    { html: '<span class="out">[5/5] ai agents</span>                  <span style="color:#7CD9A0">ok</span>', pause: 400 },
+    { html: '', pause: 200 },
+    { html: '<span class="prompt">$</span> deploy --live', pause: 500 },
+    { html: '<span class="ember-txt">→ your project is now live.</span>', pause: 700 },
+  ];
+
+  const term = document.getElementById('termBody');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function typeLine(text, el, speed){
+    return new Promise(resolve => {
+      if(reduced){ el.innerHTML = text; resolve(); return; }
+      let i = 0;
+      const isTag = /</.test(text);
+      if(isTag){ el.innerHTML = text; resolve(); return; }
+      const interval = setInterval(()=>{
+        el.textContent = text.slice(0, i+1);
+        i++;
+        if(i >= text.length){ clearInterval(interval); resolve(); }
+      }, speed);
+    });
+  }
+
+  async function boot(){
+    for(const line of lines){
+      const lineEl = document.createElement('div');
+      lineEl.className = 'term-line';
+      term.appendChild(lineEl);
+      lineEl.innerHTML = line.html;
+      await new Promise(r => setTimeout(r, line.pause));
+    }
+    const caretLine = document.createElement('div');
+    caretLine.className = 'term-line';
+    caretLine.innerHTML = '<span class="prompt">$</span> <span class="caret"></span>';
+    term.appendChild(caretLine);
+  }
+
+  // Kick off boot once, and loop with a reset for ambience
+  async function loop(){
+    while(true){
+      term.innerHTML = '';
+      await boot();
+      await new Promise(r => setTimeout(r, 3400));
+      if(reduced) break;
+    }
+  }
+  loop();
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    item.querySelector('.faq-q').addEventListener('click', () => {
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  revealEls.forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
